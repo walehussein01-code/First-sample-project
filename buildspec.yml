@@ -1,1 +1,15 @@
+version: 0.2
 
+env:
+  parameter-store:
+    DOCKER_REGISTRY_USERNAME: /myapp/docker-credential/username
+    DOCKER_REGISTRY_PASSWORD: /myapp/docker-credential/password
+
+phases:
+  pre_build:
+    commands:
+      - printf '%s' "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
+  build:
+    commands:
+      - docker build -t "$DOCKER_REGISTRY_USERNAME/sample-python-flask:latest" .
+      - docker push "$DOCKER_REGISTRY_USERNAME/sample-python-flask:latest"
